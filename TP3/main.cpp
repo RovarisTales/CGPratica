@@ -66,8 +66,9 @@ void drawCylinder(float radius, float height, int slices) {
 		glBegin(GL_TRIANGLES);
 		glColor3f(0.0f,1.0f,0.0f);
 		glVertex3f(0.0f, -height/2, 0.0f);
-		glVertex3f(sin(ang)*radius, -height/2, cos(ang)*radius);
 		glVertex3f(sin(ang+(M_PI*2/slices))*radius, -height/2, cos(ang+(M_PI*2/slices))*radius);
+		glVertex3f(sin(ang)*radius, -height/2, cos(ang)*radius);
+		
 		glEnd();
 
 		ang +=  M_PI*2/(slices);
