@@ -1,0 +1,3 @@
+/home/talis/Desktop/CGP/TP3/build/CMakeFiles/class3.dir
+/home/talis/Desktop/CGP/TP3/build/CMakeFiles/edit_cache.dir
+/home/talis/Desktop/CGP/TP3/build/CMakeFiles/rebuild_cache.dir
