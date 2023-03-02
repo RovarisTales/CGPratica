@@ -134,6 +134,12 @@ void processKeys(unsigned char key, int xx, int yy) {
 				beta -= M_PI/16;
 			}
 			break;
+		case 'z':
+			raio += 1;
+			break;
+		case 'x':
+			raio -= 1;
+			break;
 	}
 	glutPostRedisplay();
 	
