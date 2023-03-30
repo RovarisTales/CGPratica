@@ -16,13 +16,15 @@
 #include <GL/glut.h>
 #endif
 
-
+float dx,dz;
 float camX = 00, camY = 30, camZ = 40, radius = 100.0f;
+float lookX = 00, lookY = 00, lookZ = 00;
 int startX, startY, tracking = 0;
+float a = 0;
 
 int alpha = 0, beta = 45, r = 50;
 float raio = 10;
-int arr[1000];
+float arr[1000];
 unsigned int t, tw, th;
 unsigned char *imageData;
 
@@ -34,6 +36,22 @@ double h(int i, int j) {
 	return x /5;
 }
 
+double hf(float x,float y){
+	int x1 = floor(x);
+	int y1 = floor(y);
+
+	int x2 = x1+1;
+	int y2 = y1+1;
+
+	float fy = y - y1;
+	float fx = x - x1;
+
+	float h_x1_z = h(x1,y1) * (1-fy) + h(x1,y2) * fy;
+ 	float h_x2_z = h(x2,y1) * (1-fy) + h(x2,y2) * fy;
+
+	float height_xz = h_x1_z * (1 - fx) + h_x2_z * fx;
+	return height_xz;
+}
 
 void spherical2Cartesian() {
 
@@ -110,13 +128,15 @@ void drawBules(){
 
 
 }
-void generate(int* arr,int x){
-	float randx = (rand()%256)-(256/2);
-	float randz = (rand()%256)-(256/2) ;
+
+
+void generate(float* arr,int x){
+	float randx = ((rand()%8192)-(8192/2))/32;
+	float randz = ((rand()%8192)-(8192/2))/32 ;
 		
 	while(pow(randx,2)+pow(randz,2)<pow(50,2)){
-		randx = (rand()%256)-(256/2);
-		randz = (rand()%256)-(256/2);
+		randx = ((rand()%8192)-(8192/2))/32;
+	    randz = ((rand()%8192)-(8192/2))/32;
 	}
 	int y;
 	y = 2*x;
@@ -126,7 +146,7 @@ void generate(int* arr,int x){
 void drawThree(){
 	
 	for(int i = 0;i<500;i++){
-		float y = h(arr[2*i]+(256/2),arr[2*i+1]+(256/2));
+		float y = hf(arr[2*i]+(256/2),arr[2*i+1]+(256/2));
 
 		glPushMatrix();
 		
@@ -175,9 +195,9 @@ void renderScene(void) {
 
 	glLoadIdentity();
 	gluLookAt(camX, camY, camZ, 
-		      0.0,0.0,0.0,
+		      lookX,lookY,lookZ,
 			  0.0f,1.0f,0.0f);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	
 	drawPlane();
 
 	drawTerrain();
@@ -194,7 +214,75 @@ void renderScene(void) {
 
 void processKeys(unsigned char key, int xx, int yy) {
 
-// put code to process regular keys in here
+	switch(key){
+		case 'p':
+			a = 0;
+			camX = 0.0f;
+			camZ = 0.0f;
+			camY = hf(camX+(256/2),camZ+(256/2))+1;
+			lookX = camX + sin(a);
+			lookZ = camZ + cos(a);
+			lookY = camY;
+			break;
+		case 'i':
+			a += M_PI/16;
+			
+			lookX = camX + sin(a);
+			lookZ = camZ + cos(a);
+			lookY = camY;
+			break;
+		case 'o':
+			a -= M_PI/16;
+			
+			lookX = camX + sin(a);
+			lookZ = camZ + cos(a);
+			lookY = camY;
+			break;
+		case 'w':
+
+			dx = (lookX-camX);
+			dz = (lookZ-camZ);
+			camX = camX + dx;
+			camZ = camZ + dz;
+			camY = hf(camX+(256/2),camZ+(256/2))+1;
+			//camY = hf(camX+(256/2),camZ+(256/2))+1;
+			lookX = lookX +  dx;
+			lookZ = lookZ +  dz;
+			lookY = camY;
+			//lookY = camY;
+			break;
+		case 's':
+
+			dx = (lookX-camX);
+			dz = (lookZ-camZ);
+			camX = camX - dx;
+			camZ = camZ - dz;
+			camY = hf(camX+(256/2),camZ+(256/2))+1;
+			//camY = hf(camX+(256/2),camZ+(256/2))+1;
+			lookX = lookX -  dx;
+			lookZ = lookZ -  dz;
+			lookY = camY;
+			//lookY = camY;
+			break;
+		case 'a':
+			
+			camX += 1;
+			camY = hf(camX+(256/2),camZ+(256/2))+1;
+			lookX = camX + sin(a);
+			lookZ = camZ + cos(a);
+			lookY = camY;
+			break;
+		case 'd':
+			
+			camX -= 1;
+			camY = hf(camX+(256/2),camZ+(256/2))+1;
+			lookX = camX + sin(a);
+			lookZ = camZ + cos(a);
+			lookY = camY;
+			break;
+		
+	}
+	
 }
 
 
@@ -334,7 +422,7 @@ int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
 	glutInitWindowPosition(100,100);
-	glutInitWindowSize(320,320);
+	glutInitWindowSize(900,900);
 	glutCreateWindow("CG@DI-UM");
 		
 
